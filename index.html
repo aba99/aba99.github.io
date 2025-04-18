@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Blitz Bishops PGN Viewer</title>
 
-  <!-- 1) PGN4Web CSS -->
+  <!-- 1) Try Unpkg CDN for pgn4web CSS -->
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/pgn4web@3.1.5/pgn4web.css"
+    href="https://unpkg.com/pgn4web@3.1.5/pgn4web.css"
   >
-
   <!-- 2) Responsive tweaks -->
   <style>
     #pgnViewer { width:100%; max-width:800px; margin:1em auto; }
@@ -19,10 +18,11 @@
     #pgnViewer .menu { max-width:100% !important; }
   </style>
 
-  <!-- 3) PGN4Web JS (deferred) -->
+  <!-- 3) Load pgn4web JS from Unpkg, defer execution -->
   <script
-    src="https://cdn.jsdelivr.net/npm/pgn4web@3.1.5/pgn4web.min.js"
+    src="https://unpkg.com/pgn4web@3.1.5/pgn4web.min.js"
     defer
+    onerror="console.error('Failed to load PGN4Web from Unpkg')"
   ></script>
 </head>
 <body>
@@ -32,7 +32,6 @@
   <div id="pgnViewer" class="pgn4web"></div>
 
   <!-- 5) Your full PGN data -->
-  <!--    Replace the sample below with ALL your games, each separated by a blank line. -->
   <script id="pgnData" type="text/plain">
 [Event "Classical Bliss V4"]
 [Site "Montreal"]
@@ -57,16 +56,14 @@ Ke4 Kb5 48.Kf4 h6 49.Kg3 Kxb4 50.Kf3 Kc5 51.Ke4 Kc4 52.h4 h5 53.Ke3 Kd5
 
   </script>
 
-  <!-- 6) Init the viewer once DOM + library are ready -->
+  <!-- 6) Initialize viewer when ready -->
   <script>
     document.addEventListener('DOMContentLoaded', function(){
-      console.log('DOM loaded, p4w_get is', typeof p4w_get);
       if (typeof p4w_get !== 'function') {
-        console.error('PGN4Web library failed to load.');
+        console.error('PGN4Web library still not available. Check network tab.');
         return;
       }
-      var pgn = document.getElementById('pgnData').textContent.trim();
-      console.log('PGN text length:', pgn.length);
+      const pgn = document.getElementById('pgnData').textContent.trim();
       if (!pgn) {
         console.error('No PGN data found in #pgnData.');
         return;
