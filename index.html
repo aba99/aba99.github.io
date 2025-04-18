@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Blitz Bishops PGN Viewer</title>
 
-  <!-- 1) PGN4Web CSS (via HTTPS) -->
+  <!-- 1) PGN4Web CSS -->
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/pgn4web@3.1.5/pgn4web.css"
@@ -18,40 +19,58 @@
     #pgnViewer .menu { max-width:100% !important; }
   </style>
 
-  <!-- 3) PGN4Web JS, deferred so it’s ready before our init script -->
+  <!-- 3) PGN4Web JS (deferred) -->
   <script
     src="https://cdn.jsdelivr.net/npm/pgn4web@3.1.5/pgn4web.min.js"
     defer
   ></script>
 </head>
-
 <body>
   <h1 style="text-align:center;">Blitz Bishops Games</h1>
 
   <!-- 4) Viewer placeholder -->
   <div id="pgnViewer" class="pgn4web"></div>
 
-  <!-- 5) Your PGN data -->
+  <!-- 5) Your full PGN data -->
+  <!--    Replace the sample below with ALL your games, each separated by a blank line. -->
   <script id="pgnData" type="text/plain">
-[Event "Classical Bliss V3"]
+[Event "Classical Bliss V4"]
 [Site "Montreal"]
-[Date "2025.02.22"]
-[Round "5.1"]
-[White "Both, Aaron"]
-[Black "Villemaire, Michel"]
-[Result "1-0"]
-[WhiteElo "1921"]
-[BlackElo "1481"]
-[ECO "B12"]
-[EventDate "2025.02.01"]
+[Date "2025.03.16"]
+[Round "6.5"]
+[White "Naouai, Khalil"]
+[Black "Yavorskyi, Yevhen"]
+[Result "0-1"]
+[BlackElo "1616"]
+[ECO "B50"]
+[EventDate "2025.03.01"]
 
-1.e4 c6 2.d4 d5 3.f3 dxe4 4.fxe4 e5 5.Nf3 Bg4 6.Bc4 Nd7 7.O-O Ngf6 8.c3 Be7 9.Qe1 Qc7 10.Bg5 Rf8 11.Nbd2 O-O-O 12.Kh1 Rde8 13.dxe5 Nxe5 14.Nxe5 Qxe5 15.Bf4 Qa5 16.b4 Qb6 17.a4 Be6 18.a5 Qd8 19.Qe3 Bd6 20.Qxa7 Bxf4 21.a6 Qc7 22.axb7+ Kd7 23.Rxf4 Rb8 24.Qd4+ Ke7 25.e5 Nd7 26.Bxe6 fxe6 27.Nc4 Rxf4 28.Qxf4 h6 29.Nd6 Nxe5 30.Qxe5 Qxd6 31.Qxg7+ Kd8 32.Rf1 Ke8 33.Qg8+ 1-0
+1.e4 c5 2.Nf3 d6 3.c3 Nc6 4.d4 cxd4 5.cxd4 Nf6 6.Nc3 g6 7.Bc4 Bg7 8.O-O 
+O-O 9.Be3 Bd7 10.Rc1 Rc8 11.Qc2 Na5 12.Bd3 Nc4 13.Bxc4 Rxc4 14.Qd3 Rc8 15.
+Rc2 a6 16.Rd1 b5 17.e5 Bf5 18.Qd2 Bxc2 19.Qxc2 Ng4 20.a3 Nxe3 21.fxe3 dxe5
+22.dxe5 Qc7 23.Qf2 Rfd8 24.Rf1 Qc4 25.e4 Qc5 26.Nd5 Qxf2+ 27.Rxf2 Rc1+ 28.
+Rf1 Rxf1+ 29.Kxf1 Rd7 30.Ke2 e6 31.Nb4 a5 32.Nd3 Rc7 33.Nd4 Rc4 34.Nxb5 
+Bxe5 35.b3 Rc2+ 36.Kd1 Rxg2 37.Nxe5 Rg5 38.Nc3 Rxe5 39.b4 Kf8 40.Kd2 axb4 
+41.axb4 Rh5 42.Kd3 Rh3+ 43.Kd4 Rxc3 44.Kxc3 Ke7 45.e5 Kd7 46.Kd4 Kc6 47.
+Ke4 Kb5 48.Kf4 h6 49.Kg3 Kxb4 50.Kf3 Kc5 51.Ke4 Kc4 52.h4 h5 53.Ke3 Kd5 
+54.Kf4 Kd4 0-1
+
   </script>
 
-  <!-- 6) Init script -->
+  <!-- 6) Init the viewer once DOM + library are ready -->
   <script>
     document.addEventListener('DOMContentLoaded', function(){
-      const pgn = document.getElementById('pgnData').textContent;
+      console.log('DOM loaded, p4w_get is', typeof p4w_get);
+      if (typeof p4w_get !== 'function') {
+        console.error('PGN4Web library failed to load.');
+        return;
+      }
+      var pgn = document.getElementById('pgnData').textContent.trim();
+      console.log('PGN text length:', pgn.length);
+      if (!pgn) {
+        console.error('No PGN data found in #pgnData.');
+        return;
+      }
       p4w_get('pgnViewer').load_pgn(pgn);
     });
   </script>
