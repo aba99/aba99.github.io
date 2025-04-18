@@ -5,11 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Blitz Bishops PGN Viewer</title>
 
-  <!-- 1) Try Unpkg CDN for pgn4web CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/pgn4web@3.1.5/pgn4web.css"
-  >
+  <!-- 1) PGN4Web CSS via Unpkg, fallback to RawGitHack -->
+  <link id="pgn4web-css"
+        rel="stylesheet"
+        href="https://unpkg.com/pgn4web@3.1.5/pgn4web.css"
+        onerror="loadCssFallback()">
+  <script>
+    function loadCssFallback() {
+      console.warn('pgn4web.css failed to load from Unpkg, falling back to RawGitHack');
+      var l = document.getElementById('pgn4web-css');
+      l.href = 'https://rawcdn.githack.com/mliebelt/pgn4web/3.1.5/pgn4web.css';
+    }
+  </script>
+
   <!-- 2) Responsive tweaks -->
   <style>
     #pgnViewer { width:100%; max-width:800px; margin:1em auto; }
@@ -17,22 +25,25 @@
     #pgnViewer .notation,
     #pgnViewer .menu { max-width:100% !important; }
   </style>
-
-  <!-- 3) Load pgn4web JS from Unpkg, defer execution -->
-  <script
-    src="https://unpkg.com/pgn4web@3.1.5/pgn4web.min.js"
-    defer
-    onerror="console.error('Failed to load PGN4Web from Unpkg')"
-  ></script>
 </head>
 <body>
   <h1 style="text-align:center;">Blitz Bishops Games</h1>
 
-  <!-- 4) Viewer placeholder -->
+  <!-- 3) Viewer placeholder -->
   <div id="pgnViewer" class="pgn4web"></div>
 
-  <!-- 5) Your full PGN data -->
+  <!-- 4) PGN data; replace “…” with all your games -->
   <script id="pgnData" type="text/plain">
+[Event "Classical Bliss V3"]
+[Site "Montreal"]
+[Date "2025.02.22"]
+[Round "5.1"]
+[White "Both, Aaron"]
+[Black "Villemaire, Michel"]
+[Result "1-0"]
+
+1.e4 c6 2.d4 d5 3.f3 dxe4 4.fxe4 e5 5.Nf3 Bg4 6.Bc4 Nd7 7.O-O Ngf6 8.c3 Be7 9.Qe1 Qc7 10.Bg5 Rf8 11.Nbd2 O-O-O 12.Kh1 Rde8 13.dxe5 Nxe5 14.Nxe5 Qxe5 15.Bf4 Qa5 16.b4 Qb6 17.a4 Be6 18.a5 Qd8 19.Qe3 Bd6 20.Qxa7 Bxf4 21.a6 Qc7 22.axb7+ Kd7 23.Rxf4 Rb8 24.Qd4+ Ke7 25.e5 Nd7 26.Bxe6 fxe6 27.Nc4 Rxf4 28.Qxf4 h6 29.Nd6 Nxe5 30.Qxe5 Qxd6 31.Qxg7+ Kd8 32.Rf1 Ke8 33.Qg8+ 1-0
+
 [Event "Classical Bliss V4"]
 [Site "Montreal"]
 [Date "2025.03.16"]
@@ -56,20 +67,45 @@ Ke4 Kb5 48.Kf4 h6 49.Kg3 Kxb4 50.Kf3 Kc5 51.Ke4 Kc4 52.h4 h5 53.Ke3 Kd5
 
   </script>
 
-  <!-- 6) Initialize viewer when ready -->
+  <!-- 5) pgn4web JS via Unpkg, fallback to RawGitHack -->
+  <script
+    src="https://unpkg.com/pgn4web@3.1.5/pgn4web.min.js"
+    defer
+    onerror="loadJsFallback()"
+  ></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function(){
+    function loadJsFallback() {
+      console.warn('pgn4web.min.js failed to load from Unpkg, falling back to RawGitHack');
+      var s = document.createElement('script');
+      s.src = 'https://rawcdn.githack.com/mliebelt/pgn4web/3.1.5/pgn4web.min.js';
+      s.defer = true;
+      s.onload = initViewer;
+      document.head.appendChild(s);
+    }
+
+    // 6) Initialize once DOM + library are ready
+    document.addEventListener('DOMContentLoaded', function() {
       if (typeof p4w_get !== 'function') {
-        console.error('PGN4Web library still not available. Check network tab.');
+        // library not yet loaded? wait a tick...
+        setTimeout(initViewer, 200);
+      } else {
+        initViewer();
+      }
+    });
+
+    function initViewer() {
+      if (typeof p4w_get !== 'function') {
+        console.error('PGN4Web library still unavailable');
         return;
       }
-      const pgn = document.getElementById('pgnData').textContent.trim();
+      var pgn = document.getElementById('pgnData').textContent.trim();
       if (!pgn) {
-        console.error('No PGN data found in #pgnData.');
+        console.error('No PGN data found in #pgnData');
         return;
       }
       p4w_get('pgnViewer').load_pgn(pgn);
-    });
+      console.log('PGN loaded, length:', pgn.length);
+    }
   </script>
 </body>
 </html>
